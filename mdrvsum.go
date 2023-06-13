@@ -9,12 +9,13 @@ import (
 )
 
 var progName = func(path string) string {
-	for i := len(path); i > 0; i-- {
-		if path[i-1] == '/' || path[i-1] == '\\' {
-			return path[i:]
+	var s int
+	for i, c := range path {
+		if c == '/' || c == '\\' {
+			s = i+1
 		}
 	}
-	return path
+	return path[s:]
 }(os.Args[0])
 
 func init() {
@@ -31,7 +32,7 @@ func main() {
 			fmt.Println("USAGE:\n" +
 				"\t" + progName + " infile [outfile]\n" +
 				"NOTES:\n" +
-				"\tOutput file is optional. Passing only an input file will overwrite it.")
+				"\tOutput file is optional. Passing only an input file will overwrite it.\n")
 			return nil, nil, errors.New("no arguments")
 		case 1:
 			inName = os.Args[1]
