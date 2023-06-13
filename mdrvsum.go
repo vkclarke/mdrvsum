@@ -59,14 +59,15 @@ func main() {
 	defer out.Close()
 
 	// calc/apply checksum
-	checksum := func(bin []byte) (checksum uint16) {
-		for i, j := 0, 2; j <= len(bin); i, j = i+2, j+2 {
-			checksum += binary.BigEndian.Uint16(bin[i:j])
+	newsum := func(bin []byte) (sum uint16) {
+		for a, z := 0, 2; z <= len(bin); a, z = a+2, z+2 {
+			sum += binary.BigEndian.Uint16(bin[a:z])
 		}
 		return
 	}(bin[512:len(bin)])
-	binary.BigEndian.PutUint16(bin[398:400], checksum)
-	log.Printf("applied checksum: 0x%X", checksum)
+	oldsum := binary.BigEndian.Uint16(bin[398:400])
+	binary.BigEndian.PutUint16(bin[398:400], newsum)
+	log.Printf("applied checksum: 0x%X (original: 0x%X)", newsum, oldsum)
 
 	// write to file
 	switch n, err := out.Write(bin); {
